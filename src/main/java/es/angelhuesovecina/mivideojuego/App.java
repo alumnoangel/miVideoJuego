@@ -4,12 +4,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -27,6 +29,9 @@ public class App extends Application {
     int posNinjaX;
     int posNinjaY = 240;
     int movNinjaY;
+    int posShurikenX = 1020;
+    int posShurikenY = 300;
+    int movShurikenX = -3;
 
     @Override
     public void start(Stage stage) {
@@ -58,26 +63,39 @@ public class App extends Application {
         polygonPunta.setLayoutX(-22);
         polygonPunta.setRotate(270);
             //Cuerpo
-        Rectangle rectangleCuerpo = new Rectangle (0, 22, 6, 10);
-        rectangleCuerpo.setLayoutX(0);
+        Rectangle rectangleCuerpo = new Rectangle (-4, 22, 8, 10);
             //Cola
-        
-        
+        Circle circleCola = new Circle ();
+        circleCola.setRadius(6);
+        circleCola.setCenterY(36);
+        Circle circleResta = new Circle();
+        circleResta.setRadius(4);
+        circleResta.setCenterY(36);
         
         //Color shuriken
         polygonPunta.setFill(Color.GREY);
-        rectangleCuerpo.setFill(Color.GREY);
+        rectangleCuerpo.setFill(Color.BROWN);
+        circleCola.setFill(Color.GREY);
+        circleResta.setFill(Color.BLACK);
+        
+        //Agrupacion de elementos
+        Group groupShuriken = new Group();
+        groupShuriken.getChildren().add(polygonPunta);
+        groupShuriken.getChildren().add(rectangleCuerpo);
+        groupShuriken.getChildren().add(circleCola);
+        groupShuriken.getChildren().add(circleResta);
+        
+        //Posicionamiento Shuriken
+        groupShuriken.setLayoutX(posShurikenX);
+        groupShuriken.setLayoutY(posShurikenY);
+        groupShuriken.setRotate(270);
         
         //Añadir imagen
         root.getChildren().add(fondo);
         root.getChildren().add(fondo2);
         root.getChildren().add(ninja);
-        root.getChildren().add(polygonPunta);
-        root.getChildren().add(rectangleCuerpo);
-        
-        
-        
-        
+        root.getChildren().add(groupShuriken);
+        //Controles
         scene.setOnKeyPressed((KeyEvent event) -> {
             switch (event.getCode()) {
                 case RIGHT:
@@ -97,8 +115,7 @@ public class App extends Application {
         
         scene.setOnKeyReleased((KeyEvent event) -> {
             movFondo = 0;
-            movNinjaX = 0;
-            
+            movNinjaX = 0;    
         });
         
         Timeline animacionFondo = new Timeline(
@@ -108,6 +125,8 @@ public class App extends Application {
                 ninja.setX(posNinjaX);
                 posNinjaY += movNinjaY;
                 ninja.setY(posNinjaY);
+                posShurikenX += movShurikenX;
+                groupShuriken.setLayoutX(posShurikenX); 
                 
                 if (posNinjaX >= 800){
                     posNinjaX = 800;
@@ -119,10 +138,16 @@ public class App extends Application {
                 
                 if (posNinjaY <= 160 ){
                     posNinjaY = 160;
-                    movNinjaY = +1;
+                    movNinjaY = +2;
                 }else if (posNinjaY == 240){
                     movNinjaY = 0;
                 }
+                
+                if (posShurikenX == 0){
+                    posShurikenX = 1020;
+                }
+                
+                
                 
             }));
         
