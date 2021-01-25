@@ -9,6 +9,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -46,10 +49,34 @@ public class App extends Application {
         ImageView ninja = new ImageView (img2);
         ninja.setY(posNinjaY);
         
+        //Creacion shuriken
+            //Punta
+        Polygon polygonPunta = new Polygon (new double[]{
+            35.0, 10.0,
+            10.0, 20.0,
+            10.0, 0.0});
+        polygonPunta.setLayoutX(-22);
+        polygonPunta.setRotate(270);
+            //Cuerpo
+        Rectangle rectangleCuerpo = new Rectangle (0, 22, 6, 10);
+        rectangleCuerpo.setLayoutX(0);
+            //Cola
+        
+        
+        
+        //Color shuriken
+        polygonPunta.setFill(Color.GREY);
+        rectangleCuerpo.setFill(Color.GREY);
+        
         //Añadir imagen
         root.getChildren().add(fondo);
         root.getChildren().add(fondo2);
         root.getChildren().add(ninja);
+        root.getChildren().add(polygonPunta);
+        root.getChildren().add(rectangleCuerpo);
+        
+        
+        
         
         scene.setOnKeyPressed((KeyEvent event) -> {
             switch (event.getCode()) {
@@ -96,9 +123,6 @@ public class App extends Application {
                 }else if (posNinjaY == 240){
                     movNinjaY = 0;
                 }
-                    
-                
-                System.out.println(posNinjaY);
                 
             }));
         
