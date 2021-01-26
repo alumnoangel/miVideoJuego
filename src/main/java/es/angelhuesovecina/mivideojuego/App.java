@@ -38,6 +38,7 @@ public class App extends Application {
     int random1;
     int random2;
     int random3;
+    int posShuriken1XRandom;
     Random random = new Random();
     
     @Override
@@ -172,7 +173,7 @@ public class App extends Application {
         root.getChildren().add(ninja);
         root.getChildren().add(groupShuriken1);
         root.getChildren().add(groupShuriken2);
-        root.getChildren().add(groupShuriken3);
+        //root.getChildren().add(groupShuriken3);
         
         
         //Controles
@@ -214,6 +215,7 @@ public class App extends Application {
                 posShuriken3X += movShurikenX;
                 groupShuriken3.setLayoutX(posShuriken3X);
                 
+                
                 if (posNinjaX >= 800){
                     posNinjaX = 800;
                 }
@@ -232,14 +234,15 @@ public class App extends Application {
                 //Bucle Shuriken 1
                 if (posShuriken1X <= 0){
                     random1=(random.nextInt(20)+50);
-                    posShuriken1X = posShuriken1X+random1;
+                    posShuriken1X= 1030 +random1;
                 }
                 
                 //Bucle Shuriken 2
                 if (posShuriken2X <= 0){
-                    random2=(random.nextInt(151) + 200);
+                    random2=(random.nextInt(201) + 400);
                     posShuriken2X = posShuriken1X + random2;
-                    System.out.println(random1);
+                    System.out.println(random2);
+                    
                 }
                 
                 if (posShuriken3X <= 0){
