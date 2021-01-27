@@ -31,8 +31,8 @@ public class App extends Application {
     int posNinjaY = 240;
     int movNinjaY;
     int posShuriken1X = 1030;
-    int posShuriken2X = 1060;
-    int posShuriken3X = 1090;
+    int posShuriken2X = 1310;
+    int posShuriken3X = 1610;
     int posShurikenY = 300;
     int movShurikenX = -3;
     int random1;
@@ -173,7 +173,7 @@ public class App extends Application {
         root.getChildren().add(ninja);
         root.getChildren().add(groupShuriken1);
         root.getChildren().add(groupShuriken2);
-        //root.getChildren().add(groupShuriken3);
+        root.getChildren().add(groupShuriken3);
         
         
         //Controles
@@ -235,19 +235,27 @@ public class App extends Application {
                 if (posShuriken1X <= 0){
                     random1=(random.nextInt(20)+50);
                     posShuriken1X= 1030 +random1;
+                    if (posShuriken1X <= posShuriken3X+200){
+                    posShuriken1X = posShuriken1X + random3;   
+                    }
                 }
                 
                 //Bucle Shuriken 2
                 if (posShuriken2X <= 0){
-                    random2=(random.nextInt(201) + 400);
+                    random2=(random.nextInt(301) + 200);
                     posShuriken2X = posShuriken1X + random2;
                     System.out.println(random2);
                     
                 }
                 
                 if (posShuriken3X <= 0){
-                    posShuriken3X = 1090;
+                    random3=(random.nextInt(301) + 200);
+                    posShuriken3X = posShuriken2X + random3;
+                    if (posShuriken3X <= posShuriken1X+200){
+                    posShuriken3X = posShuriken3X + random3;   
+                    }   
                 }
+                
                 
             }));
         
