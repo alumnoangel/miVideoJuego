@@ -38,7 +38,6 @@ public class App extends Application {
     int random1;
     int random2;
     int random3;
-    int posShuriken1XRandom;
     Random random = new Random();
     
     @Override
@@ -175,7 +174,6 @@ public class App extends Application {
         root.getChildren().add(groupShuriken2);
         root.getChildren().add(groupShuriken3);
         
-        
         //Controles
         scene.setOnKeyPressed((KeyEvent event) -> {
             switch (event.getCode()) {
@@ -189,8 +187,7 @@ public class App extends Application {
                     if (posNinjaY == 240){
                     movNinjaY = -5;
                     }
-                    break;
-                     
+                    break;      
             }
         });
         
@@ -206,15 +203,15 @@ public class App extends Application {
                 ninja.setX(posNinjaX);
                 posNinjaY += movNinjaY;
                 ninja.setY(posNinjaY);
+                //Movimiento Shuriken1
                 posShuriken1X += movShurikenX;
                 groupShuriken1.setLayoutX(posShuriken1X);
-                
+                //Movimiento Shuriken2
                 posShuriken2X += movShurikenX;
                 groupShuriken2.setLayoutX(posShuriken2X);
-                
+                //Movimiento Shuriken3
                 posShuriken3X += movShurikenX;
-                groupShuriken3.setLayoutX(posShuriken3X);
-                
+                groupShuriken3.setLayoutX(posShuriken3X); 
                 
                 if (posNinjaX >= 800){
                     posNinjaX = 800;
@@ -244,8 +241,7 @@ public class App extends Application {
                 if (posShuriken2X <= 0){
                     random2=(random.nextInt(301) + 200);
                     posShuriken2X = posShuriken1X + random2;
-                    System.out.println(random2);
-                    
+                    System.out.println(random2);    
                 }
                 
                 if (posShuriken3X <= 0){
@@ -255,8 +251,7 @@ public class App extends Application {
                     posShuriken3X = posShuriken3X + random3;   
                     }   
                 }
-                
-                
+
             }));
         
         animacionFondo.setCycleCount(Timeline.INDEFINITE);
