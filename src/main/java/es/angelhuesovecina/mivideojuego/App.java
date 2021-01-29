@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -116,7 +117,7 @@ public class App extends Application {
         circleResta3.setCenterY(36);
         
         //Color shuriken1
-        polygonPunta1.setFill(Color.GREY);
+        polygonPunta1.setFill(Color.RED);
         rectangleCuerpo1.setFill(Color.BROWN);
         circleCola1.setFill(Color.GREY);
         circleResta1.setFill(Color.BLACK);
@@ -213,12 +214,12 @@ public class App extends Application {
                 posShuriken3X += movShurikenX;
                 groupShuriken3.setLayoutX(posShuriken3X); 
                 
-                if (posNinjaX >= 800){
-                    posNinjaX = 800;
+                if (posNinjaX >= 900){
+                    posNinjaX = 900;
                 }
                 
-                if (posNinjaX <= 50){
-                    posNinjaX = 50;
+                if (posNinjaX <= 0){
+                    posNinjaX = 0;
                 }
                 
                 if (posNinjaY <= 160 ){
@@ -236,14 +237,12 @@ public class App extends Application {
                     posShuriken1X = posShuriken1X + random3;   
                     }
                 }
-                
                 //Bucle Shuriken 2
                 if (posShuriken2X <= 0){
                     random2=(random.nextInt(301) + 200);
-                    posShuriken2X = posShuriken1X + random2;
-                    System.out.println(random2);    
+                    posShuriken2X = posShuriken1X + random2;  
                 }
-                
+                //Bucle Shuriken 3
                 if (posShuriken3X <= 0){
                     random3=(random.nextInt(301) + 200);
                     posShuriken3X = posShuriken2X + random3;
@@ -251,12 +250,21 @@ public class App extends Application {
                     posShuriken3X = posShuriken3X + random3;   
                     }   
                 }
-
+                
+                Shape shapeColision = Shape.intersect(groupShuriken1.getBoundsInParent(), polygonPunta1);
+                
+ 
             }));
         
         animacionFondo.setCycleCount(Timeline.INDEFINITE);
-        animacionFondo.play();     
-
+        animacionFondo.play(); 
+        
+        Timeline animacionMuerte = new Timeline(
+            new KeyFrame(Duration.seconds(0.017), (ActionEvent ae)->{
+                
+            }));
+        animacionMuerte.setCycleCount(Timeline.INDEFINITE);
+        animacionMuerte.play();
     }
 
     public static void main(String[] args) {
