@@ -36,8 +36,8 @@ public class App extends Application {
     int posShuriken2X = 1310;
     int posShuriken3X = 1610;
     int posShurikenY = 300;
-    int movShurikenX = -5;
-    int contadorShuriken = 1;
+    int movShurikenX = -3;
+    int contadorShuriken1 = 1;
     int posCoinX;
     int posCoinY;
     int random1;
@@ -143,7 +143,7 @@ public class App extends Application {
         circleResta2.setFill(Color.BLACK);
         
         //Color shuriken3
-        polygonPunta3.setFill(Color.BLUE);
+        polygonPunta3.setFill(Color.GREY);
         rectangleCuerpo3.setFill(Color.BROWN);
         circleCola3.setFill(Color.GREY);
         circleResta3.setFill(Color.BLACK);
@@ -172,7 +172,6 @@ public class App extends Application {
         Group groupNinja = new Group();
         ImageView ninja2 = new ImageView (img2);
         Rectangle zonaContacto = new Rectangle (55, 60);
-        zonaContacto.setFill(Color.ALICEBLUE);
         groupNinja.getChildren().add(ninja2);
         groupNinja.getChildren().add(zonaContacto);
         groupNinja.setLayoutY(posNinjaY);
@@ -182,7 +181,6 @@ public class App extends Application {
         Group groupCoin = new Group();
         ImageView coin = new ImageView (img4);
         Rectangle zonaCoin = new Rectangle (30,30);
-        zonaCoin.setFill(Color.RED);
         groupCoin.getChildren().add(coin);
         groupCoin.getChildren().add(zonaCoin);
         zonaCoin.setVisible(false);
@@ -323,7 +321,7 @@ public class App extends Application {
                 
                 //Bucle Shuriken 1
                 if (posShuriken1X <= 0){
-                    contadorShuriken ++;
+                    contadorShuriken1 ++;
                     random1=(random.nextInt(20)+50);
                     posShuriken1X= 1030 +random1;
                     if (posShuriken1X <= posShuriken3X+200){
@@ -340,7 +338,7 @@ public class App extends Application {
                 if (posShuriken3X <= 0){
                     random3=(random.nextInt(301) + 200);
                     posShuriken3X = posShuriken2X + random3;
-                    if (posShuriken3X <= posShuriken1X+200){
+                    if (posShuriken3X <= posShuriken2X+200){
                     posShuriken3X = posShuriken3X + random3;   
                     }   
                 }
@@ -360,17 +358,21 @@ public class App extends Application {
                         //Sistema de puntos
                         puntos ++;
                         textPuntuacion.setText(String.valueOf(puntos));
-                        System.out.println ("BIEN");
                         //Nueva posicion moneda
                         groupCoin.setLayoutY(posCoinY);
                         groupCoin.setLayoutX (posCoinX);
-                        contadorShuriken = 1;
+                        contadorShuriken1 = 1;
                     }
                 
                     if (colisionVacia1 == false){
                         //Perdida de vidas
                         vidas --;
-                        textVidas.setText(String.valueOf(vidas)); 
+                        textVidas.setText(String.valueOf(vidas));
+                        random1=(random.nextInt(301)+200);
+                        posShuriken1X= 1030 +random1;
+                        if (posShuriken1X <= posShuriken3X+200){
+                        posShuriken1X = posShuriken1X + random3;
+                    }
                     }
    
                     
@@ -381,29 +383,19 @@ public class App extends Application {
                         
                     }
                     //Aparicion monedas
-                    if (contadorShuriken%2 == 0){
+                    if (contadorShuriken1%2 == 0){
                         visibleCoin = true;
                         movCoinY = +2;
                         posCoinY += movCoinY;
                         if (posCoinY >= 310){
                             posCoinY = 310;
                         }
-                        groupCoin.setLayoutY(posCoinY);
-                        System.out.println(posCoinY);
-                        
+                        groupCoin.setLayoutY(posCoinY);  
                     } 
-
             }));
         
         animacionFondo.setCycleCount(Timeline.INDEFINITE);
         animacionFondo.play(); 
-        
-        Timeline animacionMuerte = new Timeline(
-            new KeyFrame(Duration.seconds(0.017), (ActionEvent ae)->{
-                
-            }));
-        animacionMuerte.setCycleCount(Timeline.INDEFINITE);
-        animacionMuerte.play();
     }
 
     public static void main(String[] args) {
