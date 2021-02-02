@@ -44,12 +44,14 @@ public class App extends Application {
     int random2;
     int random3;
     Random random = new Random();
-    int vidas;
+    int vidas = 2;
     int puntos;
     final int SCENE_TAM_X = 1000;
     final int SCENE_TAM_Y = 400;
     final int TEXT_SIZE = 30;
+    final int TEXT_SIZE_YL = 100;
     boolean visibleCoin = false;
+    boolean vivo = true;
     int movCoinY;
     int distShuriken1;
     int distShuriken2;
@@ -137,7 +139,7 @@ public class App extends Application {
         circleResta1.setFill(Color.BLACK);
         
         //Color shuriken2
-        polygonPunta2.setFill(Color.GREY);
+        polygonPunta2.setFill(Color.BLUE);
         rectangleCuerpo2.setFill(Color.BROWN);
         circleCola2.setFill(Color.GREY);
         circleResta2.setFill(Color.BLACK);
@@ -171,7 +173,7 @@ public class App extends Application {
             //Agregar marco a Ninja
         Group groupNinja = new Group();
         ImageView ninja2 = new ImageView (img2);
-        Rectangle zonaContacto = new Rectangle (55, 60);
+        Rectangle zonaContacto = new Rectangle (45, 55);
         groupNinja.getChildren().add(ninja2);
         groupNinja.getChildren().add(zonaContacto);
         groupNinja.setLayoutY(posNinjaY);
@@ -186,7 +188,6 @@ public class App extends Application {
         zonaCoin.setVisible(false);
         groupCoin.setVisible(false);
         posCoinX = (int)(Math.random()*901);
-        //posCoinY = (int)(Math.random()*(305-200+1)+200);
         groupCoin.setLayoutY(posCoinY);
         groupCoin.setLayoutX (posCoinX);
 
@@ -209,7 +210,14 @@ public class App extends Application {
         paneScores.setTranslateY(20);
         paneScores.setTranslateX(50);
         paneScores.setMinWidth(SCENE_TAM_X);
-        paneScores.setSpacing (300); 
+        paneScores.setSpacing (300);
+            //Layaout YouLose
+        HBox paneYouLose = new HBox();
+        paneYouLose.setTranslateX(250);
+        paneYouLose.setTranslateY(150);
+        paneYouLose.setMinWidth(SCENE_TAM_X);
+        paneYouLose.setSpacing(300);
+        
             //Layaout puntuacion actual
         HBox puntActual = new HBox();
         puntActual.setSpacing(10);
@@ -218,6 +226,10 @@ public class App extends Application {
         HBox puntVidas = new HBox();
         puntVidas.setSpacing(10);
         paneScores.getChildren().add(puntVidas);
+            //Layaout You Lose
+        HBox youLose = new HBox();
+        youLose.setSpacing(10);
+        paneYouLose.getChildren().add(youLose);
             //Texto etiqueta para la puntuacion
         Text textEtiquetaPuntuacion = new Text("Puntos:");
         textEtiquetaPuntuacion.setFont(Font.font(TEXT_SIZE));
@@ -231,14 +243,20 @@ public class App extends Application {
         textEtiquetaVidas.setFont(Font.font(TEXT_SIZE));
         textEtiquetaVidas.setFill(Color.BLACK);
         //Texto etiqueta para la puntuacion
-        Text textVidas = new Text("2");
+        Text textVidas = new Text ("2");
         textVidas.setFont(Font.font(TEXT_SIZE));
         textVidas.setFill(Color.BLACK);
+        //Texto etiqueta you lose
+        Text textYouLose = new Text ("YOU LOSE");
+        textYouLose.setFont(Font.font(TEXT_SIZE_YL));
+        textYouLose.setFill(Color.RED);
+        textYouLose.setVisible(false);
             //Añadir texto a los layouts
         puntActual.getChildren().add(textEtiquetaPuntuacion);
         puntActual.getChildren().add(textPuntuacion);
         puntVidas.getChildren().add(textEtiquetaVidas);
         puntVidas.getChildren().add(textVidas);
+        youLose.getChildren().add(textYouLose);
         
         //Añadir imagen
         root.getChildren().add(fondo);
@@ -248,29 +266,33 @@ public class App extends Application {
         root.getChildren().add(groupShuriken2);
         root.getChildren().add(groupShuriken3);
         root.getChildren().add(paneScores);
+        root.getChildren().add(paneYouLose);
         root.getChildren().add(groupCoin);
         
         //Controles
-        scene.setOnKeyPressed((KeyEvent event) -> {
-            switch (event.getCode()) {
-                case RIGHT:
-                    movNinjaX = +2;
-                    break;
-                case LEFT:
-                    movNinjaX = -2;
-                    break;
-                case SPACE:
-                    if (posNinjaY == 280){
-                    movNinjaY = -5;
-                    }
-                    break;      
-            }
-        });
+        if (vivo == true){
+            scene.setOnKeyPressed((KeyEvent event) -> {
+                switch (event.getCode()) {
+                    case RIGHT:
+                        movNinjaX = +2;
+                        break;
+                    case LEFT:
+                        movNinjaX = -2;
+                        break;
+                    case SPACE:
+                        if (posNinjaY == 280||(posNinjaY <= 280 && posNinjaY >=200)){
+                        movNinjaY = -5;
+                        }
+                        break;      
+                }
+            });
         
-        scene.setOnKeyReleased((KeyEvent event) -> {
-            movFondo = 0;
-            movNinjaX = 0;    
-        });
+        
+            scene.setOnKeyReleased((KeyEvent event) -> {
+                movFondo = 0;
+                movNinjaX = 0;    
+            });
+        }
 
         Timeline animacionFondo = new Timeline(
             new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> {
@@ -332,12 +354,12 @@ public class App extends Application {
                 //Bucle Shuriken 2
                 if (posShuriken2X <= 0){
                     random2=(random.nextInt(301) + 200);
-                    posShuriken2X = posShuriken1X + random2;  
+                    posShuriken2X = 1230 + random2;  
                 }
                 //Bucle Shuriken 3
                 if (posShuriken3X <= 0){
                     random3=(random.nextInt(301) + 200);
-                    posShuriken3X = posShuriken2X + random3;
+                    posShuriken3X = 1430 + random3;
                     if (posShuriken3X <= posShuriken2X+200){
                     posShuriken3X = posShuriken3X + random3;   
                     }   
@@ -370,12 +392,15 @@ public class App extends Application {
                         textVidas.setText(String.valueOf(vidas));
                         random1=(random.nextInt(301)+200);
                         posShuriken1X= 1030 +random1;
+                        System.out.println(vidas);
                         if (posShuriken1X <= posShuriken3X+200){
-                        posShuriken1X = posShuriken1X + random3;
+                        posShuriken1X = 1030 + random1;
+                        }
+                        if (posShuriken1X <= posShuriken2X+200){
+                        posShuriken1X = 1030 + random1;
+                        }
                     }
-                    }
-   
-                    
+
                     if (colisionVacia2 == false){
                       
                     }
@@ -391,7 +416,23 @@ public class App extends Application {
                             posCoinY = 310;
                         }
                         groupCoin.setLayoutY(posCoinY);  
-                    } 
+                    }
+                    
+                
+        
+                //Vivo o muerto
+                if (vidas < 0){
+                    vivo = false;
+                }
+                if (vivo == true){
+                    textYouLose.setVisible(false);
+                }else{
+                    textYouLose.setVisible(true);
+                    movShurikenX = 0;
+                    movNinjaX = 0;
+                    movNinjaY = 0;
+                } 
+                    
             }));
         
         animacionFondo.setCycleCount(Timeline.INDEFINITE);
