@@ -133,13 +133,13 @@ public class App extends Application {
         circleResta3.setCenterY(36);
         
         //Color shuriken1
-        polygonPunta1.setFill(Color.RED);
+        polygonPunta1.setFill(Color.GREY);
         rectangleCuerpo1.setFill(Color.BROWN);
         circleCola1.setFill(Color.GREY);
         circleResta1.setFill(Color.BLACK);
         
         //Color shuriken2
-        polygonPunta2.setFill(Color.BLUE);
+        polygonPunta2.setFill(Color.GREY);
         rectangleCuerpo2.setFill(Color.BROWN);
         circleCola2.setFill(Color.GREY);
         circleResta2.setFill(Color.BLACK);
@@ -269,34 +269,38 @@ public class App extends Application {
         root.getChildren().add(paneYouLose);
         root.getChildren().add(groupCoin);
         
-        //Controles
-        if (vivo == true){
+            //Controles
             scene.setOnKeyPressed((KeyEvent event) -> {
                 switch (event.getCode()) {
-                    case RIGHT:
-                        movNinjaX = +2;
-                        break;
-                    case LEFT:
-                        movNinjaX = -2;
-                        break;
-                    case SPACE:
-                        if (posNinjaY == 280||(posNinjaY <= 280 && posNinjaY >=200)){
-                        movNinjaY = -5;
+                    case RIGHT: 
+                        if (vivo == true){
+                            movNinjaX = +2;
+                            break;
                         }
-                        break;      
+                    case LEFT: 
+                        if (vivo == true){
+                            movNinjaX = -2;
+                            break;
+                        }
+                    case SPACE: 
+                        if (vivo == true){
+                            if (posNinjaY == 280||(posNinjaY <= 280 && posNinjaY >=200)){
+                            movNinjaY = -5;
+                            }
+                            break;
+                        }
                 }
             });
         
-        
-            scene.setOnKeyReleased((KeyEvent event) -> {
+             scene.setOnKeyReleased((KeyEvent event) -> {
                 movFondo = 0;
                 movNinjaX = 0;    
             });
-        }
+        
 
         Timeline animacionFondo = new Timeline(
-            new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> {
-                
+            new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> { 
+
                 if (visibleCoin == false){
                     groupCoin.setVisible(false);
                 }else{
@@ -385,14 +389,12 @@ public class App extends Application {
                         groupCoin.setLayoutX (posCoinX);
                         contadorShuriken1 = 1;
                     }
-                
-                    if (colisionVacia1 == false){
                         //Perdida de vidas
+                    if (colisionVacia1 == false){
                         vidas --;
                         textVidas.setText(String.valueOf(vidas));
                         random1=(random.nextInt(301)+200);
                         posShuriken1X= 1030 +random1;
-                        System.out.println(vidas);
                         if (posShuriken1X <= posShuriken3X+200){
                         posShuriken1X = 1030 + random1;
                         }
@@ -402,9 +404,29 @@ public class App extends Application {
                     }
 
                     if (colisionVacia2 == false){
+                        vidas --;
+                        textVidas.setText(String.valueOf(vidas));
+                        random2=(random.nextInt(301)+200);
+                        posShuriken2X= 1310 +random2;
+                        if (posShuriken2X <= posShuriken3X+200){
+                        posShuriken2X = 1310 + random2;
+                        }
+                        if (posShuriken2X <= posShuriken1X+200){
+                        posShuriken2X = 1310 + random2;
+                        }
                       
                     }
                     if (colisionVacia3 == false){
+                        vidas --;
+                        textVidas.setText(String.valueOf(vidas));
+                        random3=(random.nextInt(301)+200);
+                        posShuriken3X= 1610 +random3;
+                        if (posShuriken3X <= posShuriken2X+200){
+                        posShuriken3X = 1610 + random3;
+                        }
+                        if (posShuriken3X <= posShuriken1X+200){
+                        posShuriken3X = 1610 + random3;
+                        }
                         
                     }
                     //Aparicion monedas
@@ -417,9 +439,7 @@ public class App extends Application {
                         }
                         groupCoin.setLayoutY(posCoinY);  
                     }
-                    
-                
-        
+
                 //Vivo o muerto
                 if (vidas < 0){
                     vivo = false;
@@ -429,8 +449,6 @@ public class App extends Application {
                 }else{
                     textYouLose.setVisible(true);
                     movShurikenX = 0;
-                    movNinjaX = 0;
-                    movNinjaY = 0;
                 } 
                     
             }));
