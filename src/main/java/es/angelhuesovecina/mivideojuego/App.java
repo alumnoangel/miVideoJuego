@@ -36,7 +36,7 @@ public class App extends Application {
     int posShuriken2X = 1310;
     int posShuriken3X = 1610;
     int posShurikenY = 300;
-    int movShurikenX = -3;
+    int movShurikenX;
     int contadorShuriken1 = 1;
     int posCoinX;
     int posCoinY;
@@ -287,16 +287,29 @@ public class App extends Application {
                             if (posNinjaY == 280||(posNinjaY <= 280 && posNinjaY >=200)){
                             movNinjaY = -5;
                             }
-                            break;
                         }
-                }
-            });
-        
+                        break;
+                    case ESCAPE: 
+                        if (vivo == false){
+                            vidas = 2;
+                            puntos = 0;
+                            vivo = true;
+                            textVidas.setText(String.valueOf(vidas));
+                            textPuntuacion.setText(String.valueOf(puntos));
+                            posNinjaX = 0;
+                            posShuriken1X = 1030;
+                            posShuriken2X = 1310;
+                            posShuriken3X = 1610;
+                            posCoinY = -30;
+                            textYouLose.setVisible(false);
+                        }
+                        break;
+                    }
+            });       
              scene.setOnKeyReleased((KeyEvent event) -> {
                 movFondo = 0;
                 movNinjaX = 0;    
             });
-        
 
         Timeline animacionFondo = new Timeline(
             new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> { 
@@ -312,13 +325,29 @@ public class App extends Application {
                 groupNinja.setLayoutX(posNinjaX);
                 posNinjaY += movNinjaY;
                 groupNinja.setLayoutY(posNinjaY);
-                // Incremento movimiento Shuriken
-                if (puntos >= 5){
-                    movShurikenX = -4;
+                
+                // Vivo o Muerto
+                if (vidas < 0){
+                    vivo = false;
+                }else{
+                    vivo = true;
                 }
-                if (puntos >= 15){
-                    movShurikenX = -5;
-                }
+                
+                //Acciones vivo - muerto
+                if (vivo == true){
+                    movShurikenX = -3;
+                    textYouLose.setVisible(false);
+                    if (puntos >= 5){
+                        movShurikenX = -4;
+                    }
+                    if (puntos >= 15){
+                        movShurikenX = -5;
+                    }
+                }else{
+                    movShurikenX = 0;
+                    textYouLose.setVisible(true);
+                }   
+
                 //Movimiento Shuriken1
                 posShuriken1X += movShurikenX;
                 groupShuriken1.setLayoutX(posShuriken1X);
@@ -439,17 +468,6 @@ public class App extends Application {
                         }
                         groupCoin.setLayoutY(posCoinY);  
                     }
-
-                //Vivo o muerto
-                if (vidas < 0){
-                    vivo = false;
-                }
-                if (vivo == true){
-                    textYouLose.setVisible(false);
-                }else{
-                    textYouLose.setVisible(true);
-                    movShurikenX = 0;
-                } 
                     
             }));
         
