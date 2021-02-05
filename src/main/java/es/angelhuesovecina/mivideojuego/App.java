@@ -73,10 +73,12 @@ public class App extends Application {
         Image img3 = new Image(getClass().getResourceAsStream("/images/fondo2.png"));
         ImageView fondo2 = new ImageView(img3);
         Image img4 = new Image (getClass().getResourceAsStream("/images/coinnn_1.png"));
-        //ImageView coin = new ImageView(img4);
         
         //Imagen ninja
         Image img2 = new Image (getClass().getResourceAsStream("/images/ninjaBueno.png"));
+        Image img5 = new Image (getClass().getResourceAsStream("/images/ninaMuerto.png"));
+        ImageView ninjaMuerto = new ImageView (img5);
+        ninjaMuerto.setVisible(false);
         
         //Creacion shuriken 1
             //Punta
@@ -268,6 +270,7 @@ public class App extends Application {
         root.getChildren().add(paneScores);
         root.getChildren().add(paneYouLose);
         root.getChildren().add(groupCoin);
+        root.getChildren().add(ninjaMuerto);
         
             //Controles
             scene.setOnKeyPressed((KeyEvent event) -> {
@@ -275,17 +278,17 @@ public class App extends Application {
                     case RIGHT: 
                         if (vivo == true){
                             movNinjaX = +2;
-                            break;
                         }
+                        break;
                     case LEFT: 
                         if (vivo == true){
                             movNinjaX = -2;
-                            break;
                         }
+                        break;
                     case SPACE: 
                         if (vivo == true){
-                            if (posNinjaY == 280||(posNinjaY <= 280 && posNinjaY >=200)){
-                            movNinjaY = -5;
+                            if (posNinjaY == 280){
+                                movNinjaY = -5;
                             }
                         }
                         break;
@@ -312,7 +315,11 @@ public class App extends Application {
             });
 
         Timeline animacionFondo = new Timeline(
-            new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> { 
+            new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> {
+                
+                //Ninja Muerto
+            ninjaMuerto.setX(posNinjaX);
+            ninjaMuerto.setY(posNinjaY);
 
                 if (visibleCoin == false){
                     groupCoin.setVisible(false);
@@ -337,6 +344,8 @@ public class App extends Application {
                 if (vivo == true){
                     movShurikenX = -3;
                     textYouLose.setVisible(false);
+                    ninjaMuerto.setVisible(false);
+                    groupNinja.setVisible(true);
                     if (puntos >= 5){
                         movShurikenX = -4;
                     }
@@ -346,6 +355,8 @@ public class App extends Application {
                 }else{
                     movShurikenX = 0;
                     textYouLose.setVisible(true);
+                    ninjaMuerto.setVisible(true);
+                    groupNinja.setVisible(false);
                 }   
 
                 //Movimiento Shuriken1
