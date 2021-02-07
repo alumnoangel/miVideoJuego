@@ -5,8 +5,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -56,6 +58,14 @@ public class App extends Application {
     int distShuriken1;
     int distShuriken2;
     int distShuriken3;
+    Text textPuntuacion;
+    Group groupCoin;
+    Text textVidas;
+    Rectangle zonaContacto;
+    Rectangle zonaCoin;
+    Polygon polygonPunta1;
+    Polygon polygonPunta2;
+    Polygon polygonPunta3;
     
     @Override
     public void start(Stage stage) {
@@ -82,7 +92,7 @@ public class App extends Application {
         
         //Creacion shuriken 1
             //Punta
-        Polygon polygonPunta1 = new Polygon (new double[]{
+        polygonPunta1 = new Polygon (new double[]{
             35.0, 10.0,
             10.0, 20.0,
             10.0, 0.0});
@@ -100,7 +110,7 @@ public class App extends Application {
         
         //Creacion shuriken 2
             //Punta
-        Polygon polygonPunta2 = new Polygon (new double[]{
+        polygonPunta2 = new Polygon (new double[]{
             35.0, 10.0,
             10.0, 20.0,
             10.0, 0.0});
@@ -118,7 +128,7 @@ public class App extends Application {
         
         //Creacion shuriken 3
             //Punta
-        Polygon polygonPunta3 = new Polygon (new double[]{
+        polygonPunta3 = new Polygon (new double[]{
             35.0, 10.0,
             10.0, 20.0,
             10.0, 0.0});
@@ -175,16 +185,16 @@ public class App extends Application {
             //Agregar marco a Ninja
         Group groupNinja = new Group();
         ImageView ninja2 = new ImageView (img2);
-        Rectangle zonaContacto = new Rectangle (45, 55);
+        zonaContacto = new Rectangle (45, 55);
         groupNinja.getChildren().add(ninja2);
         groupNinja.getChildren().add(zonaContacto);
         groupNinja.setLayoutY(posNinjaY);
         zonaContacto.setVisible(false);
         
             //Agregar marco a coin
-        Group groupCoin = new Group();
+        groupCoin = new Group();
         ImageView coin = new ImageView (img4);
-        Rectangle zonaCoin = new Rectangle (30,30);
+        zonaCoin = new Rectangle (30,30);
         groupCoin.getChildren().add(coin);
         groupCoin.getChildren().add(zonaCoin);
         zonaCoin.setVisible(false);
@@ -209,8 +219,9 @@ public class App extends Application {
         //LAYOUTS PUNTUACIONES
             //Layaout principal
         HBox paneScores = new HBox();
-        paneScores.setTranslateY(20);
-        paneScores.setTranslateX(50);
+        //paneScores.setTranslateY(20);
+        //paneScores.setTranslateX(50);
+        paneScores.setAlignment(Pos.CENTER);
         paneScores.setMinWidth(SCENE_TAM_X);
         paneScores.setSpacing (300);
             //Layaout YouLose
@@ -236,16 +247,19 @@ public class App extends Application {
         Text textEtiquetaPuntuacion = new Text("Puntos:");
         textEtiquetaPuntuacion.setFont(Font.font(TEXT_SIZE));
         textEtiquetaPuntuacion.setFill(Color.BLACK);
+        textEtiquetaPuntuacion.setLayoutX(100);
             //Texto para puntuacion
-        Text textPuntuacion = new Text("0");
+
+        textPuntuacion = new Text("0");
         textPuntuacion.setFont(Font.font(TEXT_SIZE));
         textPuntuacion.setFill(Color.BLACK);
+        textPuntuacion.setLayoutX(250);
             //Texto etiqueta vidas
         Text textEtiquetaVidas = new Text("Vidas:");
         textEtiquetaVidas.setFont(Font.font(TEXT_SIZE));
         textEtiquetaVidas.setFill(Color.BLACK);
         //Texto etiqueta para la puntuacion
-        Text textVidas = new Text ("2");
+        textVidas = new Text ("2");
         textVidas.setFont(Font.font(TEXT_SIZE));
         textVidas.setFill(Color.BLACK);
         //Texto etiqueta you lose
@@ -409,6 +423,20 @@ public class App extends Application {
                     }   
                 }
                 //Colisiones
+                colisiones();
+                    
+            }));
+        
+        animacionFondo.setCycleCount(Timeline.INDEFINITE);
+        animacionFondo.play();}
+        
+
+    public static void main(String[] args) {
+        launch();
+    }
+    
+    void colisiones(){
+      //Colisiones
                 Shape zonaColision1 = Shape.intersect(zonaContacto, polygonPunta1);
                 boolean colisionVacia1 = zonaColision1.getBoundsInLocal().isEmpty();
                 Shape zonaColision2 = Shape.intersect(zonaContacto, polygonPunta2);
@@ -478,16 +506,10 @@ public class App extends Application {
                             posCoinY = 310;
                         }
                         groupCoin.setLayoutY(posCoinY);  
-                    }
-                    
-            }));
-        
-        animacionFondo.setCycleCount(Timeline.INDEFINITE);
-        animacionFondo.play(); 
+                    }  
+    
     }
-
-    public static void main(String[] args) {
-        launch();
-    }
-
 }
+    
+    
+
