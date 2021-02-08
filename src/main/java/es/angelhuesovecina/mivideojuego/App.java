@@ -105,22 +105,57 @@ public class App extends Application {
         ninjaMuerto.setVisible(false);
         
         //Creacion de Shurikens
-        creacionShuriken();
+        creacionShurikens();
         
         //Agregando marco al ninja
-        marcoNinja();
+        groupNinja = new Group();
+        ImageView ninja2 = new ImageView (img2);
+        zonaContacto = new Rectangle (45, 55);
+        groupNinja.getChildren().add(ninja2);
+        groupNinja.getChildren().add(zonaContacto);
+        groupNinja.setLayoutY(posNinjaY);
+        zonaContacto.setVisible(false);
         
         //Agregando marco a la moneda
-        monedaConMarco();
+        groupCoin = new Group();
+        ImageView coin = new ImageView (img4);
+        zonaCoin = new Rectangle (30,30);
+        groupCoin.getChildren().add(coin);
+        groupCoin.getChildren().add(zonaCoin);
+        zonaCoin.setVisible(false);
+        groupCoin.setVisible(false);
+        posCoinX = (int)(Math.random()*901);
+        groupCoin.setLayoutY(posCoinY);
+        groupCoin.setLayoutX (posCoinX);
 
         //Posicionamiento de los shurikens
-        posicionesShuriken();
+        groupShuriken1.setLayoutX(posShuriken1X);
+        groupShuriken1.setLayoutY(posShurikenY);
+        groupShuriken1.setRotate(270);
+        //Posicionamiento Shuriken2
+        groupShuriken2.setLayoutX(posShuriken2X);
+        groupShuriken2.setLayoutY(posShurikenY);
+        groupShuriken2.setRotate(270);
+        //Posicionamiento Shuriken3
+        groupShuriken3.setLayoutX(posShuriken3X);
+        groupShuriken3.setLayoutY(posShurikenY);
+        groupShuriken3.setRotate(270);
+    
         
         //LAYOUTS PUNTUACIONES
-        layaoutsPuntuaciones();
+        layaoutPuntuaciones();
         
         //Añadir imagen
-        imagenesAñadidas();
+        root.getChildren().add(fondo);
+        root.getChildren().add(fondo2);
+        root.getChildren().add(groupNinja);
+        root.getChildren().add(groupShuriken1);
+        root.getChildren().add(groupShuriken2);
+        root.getChildren().add(groupShuriken3);
+        root.getChildren().add(paneScores);
+        root.getChildren().add(paneYouLose);
+        root.getChildren().add(groupCoin);
+        root.getChildren().add(ninjaMuerto);
         
         //Controles
         controles();
@@ -131,6 +166,20 @@ public class App extends Application {
                 //Ninja Muerto
             ninjaMuerto.setX(posNinjaX);
             ninjaMuerto.setY(posNinjaY);
+            
+            //Restart Shurikens
+            if (posShuriken1X <= 0){
+                posShuriken1X = 1030;
+                contadorShuriken1 ++;
+                
+            }
+            if (posShuriken2X <= 0){
+                posShuriken2X = 1310;
+            }
+            if (posShuriken3X <=0){
+                posShuriken3X = 1610;
+            }
+                
                 
                 //Visibilidad Moneda
                 if (visibleCoin == false){
@@ -147,13 +196,34 @@ public class App extends Application {
                 }
                 
                 //Accion de movimiento Ninja
-                accionesNinja();   
+                posNinjaX += movNinjaX;
+                groupNinja.setLayoutX(posNinjaX);
+                posNinjaY += movNinjaY;
+                groupNinja.setLayoutY(posNinjaY);
+
+                //Acciones vivo - muerto
+                if (vivo == true){
+                    movShurikenX = -3;
+                    textYouLose.setVisible(false);
+                    ninjaMuerto.setVisible(false);
+                    groupNinja.setVisible(true);
+                    if (puntos >= 5){
+                        movShurikenX = -4;
+                    }
+                    if (puntos >= 15){
+                        movShurikenX = -5;
+                    }
+                }else{
+                    movShurikenX = 0;
+                    textYouLose.setVisible(true);
+                    ninjaMuerto.setVisible(true);
+                    groupNinja.setVisible(false);
+                }   
                 
                 //Movimiento de los Shurikens
                 movShuriken();
                 //Colisiones
                 colisiones();
-                    
             }));
         
         animacionFondo.setCycleCount(Timeline.INDEFINITE);
@@ -164,16 +234,114 @@ public class App extends Application {
         launch();
     }
     
+    void controles(){
+        scene.setOnKeyPressed((KeyEvent event) -> {
+                switch (event.getCode()) {
+                    case RIGHT: 
+                        if (vivo == true){
+                            movNinjaX = +2;
+                        }
+                        break;
+                    case LEFT: 
+                        if (vivo == true){
+                            movNinjaX = -2;
+                        }
+                        break;
+                    case SPACE: 
+                        if (vivo == true){
+                            if (posNinjaY == 280){
+                                movNinjaY = -5;
+                            }
+                        }
+                        break;
+                    case ESCAPE: 
+                        if (vivo == false){
+                            vidas = 2;
+                            puntos = 0;
+                            vivo = true;
+                            textVidas.setText(String.valueOf(vidas));
+                            textPuntuacion.setText(String.valueOf(puntos));
+                            posNinjaX = 0;
+                            posShuriken1X = 1030;
+                            posShuriken2X = 1310;
+                            posShuriken3X = 1610;
+                            posCoinY = -30;
+                            textYouLose.setVisible(false);
+                        }
+                        break;
+                    }
+            });       
+             scene.setOnKeyReleased((KeyEvent event) -> {
+                movFondo = 0;
+                movNinjaX = 0;    
+            });
+    }
+    
+    void layaoutPuntuaciones(){
+        //Layaout principal
+        paneScores = new HBox();
+        paneScores.setAlignment(Pos.CENTER);
+        paneScores.setMinWidth(SCENE_TAM_X);
+        paneScores.setSpacing (300);
+            //Layaout YouLose
+        paneYouLose = new HBox();
+        paneYouLose.setTranslateX(250);
+        paneYouLose.setTranslateY(150);
+        paneYouLose.setMinWidth(SCENE_TAM_X);
+        paneYouLose.setSpacing(300);
+        
+            //Layaout puntuacion actual
+        HBox puntActual = new HBox();
+        puntActual.setSpacing(10);
+        paneScores.getChildren().add(puntActual);
+            //Layaout vidas
+        HBox puntVidas = new HBox();
+        puntVidas.setSpacing(10);
+        paneScores.getChildren().add(puntVidas);
+            //Layaout You Lose
+        HBox youLose = new HBox();
+        youLose.setSpacing(10);
+        paneYouLose.getChildren().add(youLose);
+            //Texto etiqueta para la puntuacion
+        Text textEtiquetaPuntuacion = new Text("Puntos:");
+        textEtiquetaPuntuacion.setFont(Font.font(TEXT_SIZE));
+        textEtiquetaPuntuacion.setFill(Color.BLACK);
+        textEtiquetaPuntuacion.setLayoutX(100);
+            //Texto para puntuacion
+        textPuntuacion = new Text("0");
+        textPuntuacion.setFont(Font.font(TEXT_SIZE));
+        textPuntuacion.setFill(Color.BLACK);
+        textPuntuacion.setLayoutX(250);
+            //Texto etiqueta vidas
+        Text textEtiquetaVidas = new Text("Vidas:");
+        textEtiquetaVidas.setFont(Font.font(TEXT_SIZE));
+        textEtiquetaVidas.setFill(Color.BLACK);
+        //Texto etiqueta para la puntuacion
+        textVidas = new Text ("2");
+        textVidas.setFont(Font.font(TEXT_SIZE));
+        textVidas.setFill(Color.BLACK);
+        //Texto etiqueta you lose
+        textYouLose = new Text ("YOU LOSE");
+        textYouLose.setFont(Font.font(TEXT_SIZE_YL));
+        textYouLose.setFill(Color.RED);
+        textYouLose.setVisible(false);
+            //Añadir texto a los layouts
+        puntActual.getChildren().add(textEtiquetaPuntuacion);
+        puntActual.getChildren().add(textPuntuacion);
+        puntVidas.getChildren().add(textEtiquetaVidas);
+        puntVidas.getChildren().add(textVidas);
+        youLose.getChildren().add(textYouLose);
+    }
+    
     void colisiones(){
-      //Colisiones
-                Shape zonaColision1 = Shape.intersect(zonaContacto, polygonPunta1);
-                boolean colisionVacia1 = zonaColision1.getBoundsInLocal().isEmpty();
-                Shape zonaColision2 = Shape.intersect(zonaContacto, polygonPunta2);
-                boolean colisionVacia2 = zonaColision2.getBoundsInLocal().isEmpty();
-                Shape zonaColision3 = Shape.intersect(zonaContacto, polygonPunta3);
-                boolean colisionVacia3 = zonaColision3.getBoundsInLocal().isEmpty();
-                Shape zonaColision4 = Shape.intersect(zonaContacto, zonaCoin);
-                boolean colisionVacia4 = zonaColision4.getBoundsInLocal().isEmpty();
+        Shape zonaColision1 = Shape.intersect(zonaContacto, polygonPunta1);
+        boolean colisionVacia1 = zonaColision1.getBoundsInLocal().isEmpty();
+        Shape zonaColision2 = Shape.intersect(zonaContacto, polygonPunta2);
+        boolean colisionVacia2 = zonaColision2.getBoundsInLocal().isEmpty();
+        Shape zonaColision3 = Shape.intersect(zonaContacto, polygonPunta3);
+        boolean colisionVacia3 = zonaColision3.getBoundsInLocal().isEmpty();
+        Shape zonaColision4 = Shape.intersect(zonaContacto, zonaCoin);
+        boolean colisionVacia4 = zonaColision4.getBoundsInLocal().isEmpty();
                     if (colisionVacia4 == false && visibleCoin == true){
                         visibleCoin = false;
                         posCoinX = (int)(Math.random()*901);
@@ -235,12 +403,39 @@ public class App extends Application {
                             posCoinY = 310;
                         }
                         groupCoin.setLayoutY(posCoinY);  
-                    }  
-    
+                    }
+                    System.out.println(contadorShuriken1);
     }
     
-    void creacionShuriken(){
-        //Creacion shuriken 1
+    void movShuriken(){
+       posShuriken1X += movShurikenX;
+                groupShuriken1.setLayoutX(posShuriken1X);
+                //Movimiento Shuriken2
+                posShuriken2X += movShurikenX;
+                groupShuriken2.setLayoutX(posShuriken2X);
+                //Movimiento Shuriken3
+                posShuriken3X += movShurikenX;
+                groupShuriken3.setLayoutX(posShuriken3X); 
+                
+                if (posNinjaX >= 900){
+                    posNinjaX = 900;
+                }
+                
+                if (posNinjaX <= 0){
+                    posNinjaX = 0;
+                }
+                
+                if (posNinjaY <= 200 ){
+                    posNinjaY = 200;
+                    movNinjaY = +3;
+                }else if (posNinjaY >= 280){
+                    posNinjaY = 280;
+                    movNinjaY = 0;
+                } 
+    }
+    
+    void creacionShurikens(){
+      //Creacion shuriken 1
             //Punta
         polygonPunta1 = new Polygon (new double[]{
             35.0, 10.0,
@@ -330,211 +525,7 @@ public class App extends Application {
         groupShuriken3.getChildren().add(polygonPunta3);
         groupShuriken3.getChildren().add(rectangleCuerpo3);
         groupShuriken3.getChildren().add(circleCola3);
-        groupShuriken3.getChildren().add(circleResta3);
-    }
-    
-    void controles(){
-        scene.setOnKeyPressed((KeyEvent event) -> {
-                switch (event.getCode()) {
-                    case RIGHT: 
-                        if (vivo == true){
-                            movNinjaX = +2;
-                        }
-                        break;
-                    case LEFT: 
-                        if (vivo == true){
-                            movNinjaX = -2;
-                        }
-                        break;
-                    case SPACE: 
-                        if (vivo == true){
-                            if (posNinjaY == 280){
-                                movNinjaY = -5;
-                            }
-                        }
-                        break;
-                    case ESCAPE: 
-                        if (vivo == false){
-                            vidas = 2;
-                            puntos = 0;
-                            vivo = true;
-                            textVidas.setText(String.valueOf(vidas));
-                            textPuntuacion.setText(String.valueOf(puntos));
-                            posNinjaX = 0;
-                            posShuriken1X = 1030;
-                            posShuriken2X = 1310;
-                            posShuriken3X = 1610;
-                            posCoinY = -30;
-                            textYouLose.setVisible(false);
-                        }
-                        break;
-                    }
-            });       
-             scene.setOnKeyReleased((KeyEvent event) -> {
-                movFondo = 0;
-                movNinjaX = 0;    
-            });
-    }
-    
-    void movShuriken(){
-        //Movimiento Shuriken1
-                posShuriken1X += movShurikenX;
-                groupShuriken1.setLayoutX(posShuriken1X);
-                //Movimiento Shuriken2
-                posShuriken2X += movShurikenX;
-                groupShuriken2.setLayoutX(posShuriken2X);
-                //Movimiento Shuriken3
-                posShuriken3X += movShurikenX;
-                groupShuriken3.setLayoutX(posShuriken3X); 
-                
-                if (posNinjaX >= 900){
-                    posNinjaX = 900;
-                }
-                
-                if (posNinjaX <= 0){
-                    posNinjaX = 0;
-                }
-                
-                if (posNinjaY <= 200 ){
-                    posNinjaY = 200;
-                    movNinjaY = +3;
-                }else if (posNinjaY >= 280){
-                    posNinjaY = 280;
-                    movNinjaY = 0;
-                }
-    }
-    
-    void accionesNinja(){
-        //Accion de movimiento Ninja
-                posNinjaX += movNinjaX;
-                groupNinja.setLayoutX(posNinjaX);
-                posNinjaY += movNinjaY;
-                groupNinja.setLayoutY(posNinjaY);
-
-                //Acciones vivo - muerto
-                if (vivo == true){
-                    movShurikenX = -3;
-                    textYouLose.setVisible(false);
-                    ninjaMuerto.setVisible(false);
-                    groupNinja.setVisible(true);
-                    if (puntos >= 5){
-                        movShurikenX = -4;
-                    }
-                    if (puntos >= 15){
-                        movShurikenX = -5;
-                    }
-                }else{
-                    movShurikenX = 0;
-                    textYouLose.setVisible(true);
-                    ninjaMuerto.setVisible(true);
-                    groupNinja.setVisible(false);
-                }
-    }
-    
-    void imagenesAñadidas (){
-        root.getChildren().add(fondo);
-        root.getChildren().add(fondo2);
-        root.getChildren().add(groupNinja);
-        root.getChildren().add(groupShuriken1);
-        root.getChildren().add(groupShuriken2);
-        root.getChildren().add(groupShuriken3);
-        root.getChildren().add(paneScores);
-        root.getChildren().add(paneYouLose);
-        root.getChildren().add(groupCoin);
-        root.getChildren().add(ninjaMuerto);
-    }
-    
-    void layaoutsPuntuaciones(){
-        //Layaout principal
-        paneScores = new HBox();
-        paneScores.setAlignment(Pos.CENTER);
-        paneScores.setMinWidth(SCENE_TAM_X);
-        paneScores.setSpacing (300);
-            //Layaout YouLose
-        paneYouLose = new HBox();
-        paneYouLose.setTranslateX(250);
-        paneYouLose.setTranslateY(150);
-        paneYouLose.setMinWidth(SCENE_TAM_X);
-        paneYouLose.setSpacing(300);
-        
-            //Layaout puntuacion actual
-        HBox puntActual = new HBox();
-        puntActual.setSpacing(10);
-        paneScores.getChildren().add(puntActual);
-            //Layaout vidas
-        HBox puntVidas = new HBox();
-        puntVidas.setSpacing(10);
-        paneScores.getChildren().add(puntVidas);
-            //Layaout You Lose
-        HBox youLose = new HBox();
-        youLose.setSpacing(10);
-        paneYouLose.getChildren().add(youLose);
-            //Texto etiqueta para la puntuacion
-        Text textEtiquetaPuntuacion = new Text("Puntos:");
-        textEtiquetaPuntuacion.setFont(Font.font(TEXT_SIZE));
-        textEtiquetaPuntuacion.setFill(Color.BLACK);
-        textEtiquetaPuntuacion.setLayoutX(100);
-            //Texto para puntuacion
-        textPuntuacion = new Text("0");
-        textPuntuacion.setFont(Font.font(TEXT_SIZE));
-        textPuntuacion.setFill(Color.BLACK);
-        textPuntuacion.setLayoutX(250);
-            //Texto etiqueta vidas
-        Text textEtiquetaVidas = new Text("Vidas:");
-        textEtiquetaVidas.setFont(Font.font(TEXT_SIZE));
-        textEtiquetaVidas.setFill(Color.BLACK);
-        //Texto etiqueta para la puntuacion
-        textVidas = new Text ("2");
-        textVidas.setFont(Font.font(TEXT_SIZE));
-        textVidas.setFill(Color.BLACK);
-        //Texto etiqueta you lose
-        textYouLose = new Text ("YOU LOSE");
-        textYouLose.setFont(Font.font(TEXT_SIZE_YL));
-        textYouLose.setFill(Color.RED);
-        textYouLose.setVisible(false);
-            //Añadir texto a los layouts
-        puntActual.getChildren().add(textEtiquetaPuntuacion);
-        puntActual.getChildren().add(textPuntuacion);
-        puntVidas.getChildren().add(textEtiquetaVidas);
-        puntVidas.getChildren().add(textVidas);
-        youLose.getChildren().add(textYouLose);
-    }
-    
-    void posicionesShuriken (){
-        groupShuriken1.setLayoutX(posShuriken1X);
-        groupShuriken1.setLayoutY(posShurikenY);
-        groupShuriken1.setRotate(270);
-        //Posicionamiento Shuriken2
-        groupShuriken2.setLayoutX(posShuriken2X);
-        groupShuriken2.setLayoutY(posShurikenY);
-        groupShuriken2.setRotate(270);
-        //Posicionamiento Shuriken3
-        groupShuriken3.setLayoutX(posShuriken3X);
-        groupShuriken3.setLayoutY(posShurikenY);
-        groupShuriken3.setRotate(270);
-    }
-    
-    void monedaConMarco(){
-        groupCoin = new Group();
-        ImageView coin = new ImageView (img4);
-        zonaCoin = new Rectangle (30,30);
-        groupCoin.getChildren().add(coin);
-        groupCoin.getChildren().add(zonaCoin);
-        zonaCoin.setVisible(false);
-        groupCoin.setVisible(false);
-        posCoinX = (int)(Math.random()*901);
-        groupCoin.setLayoutY(posCoinY);
-        groupCoin.setLayoutX (posCoinX);
-    }
-    
-    void marcoNinja(){
-        groupNinja = new Group();
-        ImageView ninja2 = new ImageView (img2);
-        zonaContacto = new Rectangle (45, 55);
-        groupNinja.getChildren().add(ninja2);
-        groupNinja.getChildren().add(zonaContacto);
-        groupNinja.setLayoutY(posNinjaY);
-        zonaContacto.setVisible(false);
+        groupShuriken3.getChildren().add(circleResta3);  
     }
 }
     
