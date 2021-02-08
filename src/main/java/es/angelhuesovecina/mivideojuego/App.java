@@ -77,6 +77,7 @@ public class App extends Application {
     ImageView ninjaMuerto;
     ImageView fondo;
     ImageView fondo2;
+    ImageView gameOver;
     Image img4;
     Image img2;
     HBox paneScores;
@@ -95,116 +96,24 @@ public class App extends Application {
         stage.show();        
         
         //Carga de imagenes
-        //Imagenes de fondo
-        Image img = new Image(getClass().getResourceAsStream("/images/fondo.png"));
-        fondo = new ImageView(img);
-        Image img3 = new Image(getClass().getResourceAsStream("/images/fondo2.png"));
-        fondo2 = new ImageView(img3);
-        img4 = new Image (getClass().getResourceAsStream("/images/coinnn_1.png"));
-        
-        //Imagen ninja
-        img2 = new Image (getClass().getResourceAsStream("/images/ninjaBueno.png"));
-        Image img5 = new Image (getClass().getResourceAsStream("/images/ninaMuerto.png"));
-        ninjaMuerto = new ImageView (img5);
-        ninjaMuerto.setVisible(false);
-        
-        //Imagen GameOver
-        Image img6 = new Image(getClass().getResourceAsStream("/images/gameOver.png"));
-        ImageView gameOver = new ImageView (img6);
-        gameOver.setVisible(false);
+        cargaImagenes();
         
         //Creacion de Shurikens
         creacionShurikens();
         
-        //Agregando marco al ninja
-        groupNinja = new Group();
-        ImageView ninja2 = new ImageView (img2);
-        zonaContacto = new Rectangle (45, 55);
-        groupNinja.getChildren().add(ninja2);
-        groupNinja.getChildren().add(zonaContacto);
-        groupNinja.setLayoutY(posNinjaY);
-        zonaContacto.setVisible(false);
+        //Creacion de los marcos en las imagenes
+        marcos();
         
-        //Agregando marco a la moneda
-        groupCoin = new Group();
-        ImageView coin = new ImageView (img4);
-        zonaCoin = new Rectangle (30,30);
-        groupCoin.getChildren().add(coin);
-        groupCoin.getChildren().add(zonaCoin);
-        zonaCoin.setVisible(false);
-        groupCoin.setVisible(false);
-        posCoinX = (int)(Math.random()*901);
-        groupCoin.setLayoutY(posCoinY);
-        groupCoin.setLayoutX (posCoinX);
-
         //Posicionamiento de los shurikens
-        groupShuriken1.setLayoutX(posShuriken1X);
-        groupShuriken1.setLayoutY(posShurikenY);
-        groupShuriken1.setRotate(270);
-        //Posicionamiento Shuriken2
-        groupShuriken2.setLayoutX(posShuriken2X);
-        groupShuriken2.setLayoutY(posShurikenY);
-        groupShuriken2.setRotate(270);
-        //Posicionamiento Shuriken3
-        groupShuriken3.setLayoutX(posShuriken3X);
-        groupShuriken3.setLayoutY(posShurikenY);
-        groupShuriken3.setRotate(270);
+        posShuriken();
         
-        //Sonido salto  
-        URL urlAudioSalto = getClass().getResource("/audio/salto3.wav");
-        if(urlAudioSalto != null) {
-            try {
-                sonidoSalto = new AudioClip(urlAudioSalto.toURI().toString());
-                
-            } catch (URISyntaxException ex) {
-                System.out.println("Error en el formato de ruta de archivo de audio");
-            }            
-        } else {
-        System.out.println("No se ha encontrado el archivo de audio");
-        }
-        
-        //Sonido salto  
-        URL urlAudioMoneda = getClass().getResource("/audio/moneda.wav");
-        if(urlAudioMoneda != null) {
-            try {
-                sonidoMoneda = new AudioClip(urlAudioMoneda.toURI().toString());
-                
-            } catch (URISyntaxException ex) {
-                System.out.println("Error en el formato de ruta de archivo de audio");
-            }            
-        } else {
-        System.out.println("No se ha encontrado el archivo de audio");
-        }
-        
-        //Sonido Ambiente  
-        URL urlAudioAmbiente = getClass().getResource("/audio/ambiente.mp3");
-        if(urlAudioAmbiente != null) {
-            try {
-                sonidoAmbiente = new AudioClip(urlAudioAmbiente.toURI().toString());
-                sonidoAmbiente.setCycleCount(AudioClip.INDEFINITE);
-                sonidoAmbiente.play();
-                
-            } catch (URISyntaxException ex) {
-                System.out.println("Error en el formato de ruta de archivo de audio");
-            }            
-        } else {
-        System.out.println("No se ha encontrado el archivo de audio");
-        }
+        audios();
 
         //LAYOUTS PUNTUACIONES
         layaoutPuntuaciones();
         
-        //Añadir imagen
-        root.getChildren().add(fondo);
-        root.getChildren().add(fondo2);
-        root.getChildren().add(groupNinja);
-        root.getChildren().add(groupShuriken1);
-        root.getChildren().add(groupShuriken2);
-        root.getChildren().add(groupShuriken3);
-        root.getChildren().add(paneScores);
-        root.getChildren().add(groupCoin);
-        root.getChildren().add(ninjaMuerto);
-        root.getChildren().add(gameOver);
+        //Imagenes añadidas a root
+        imagenesAñadidas();
         
         //Controles
         controles();
@@ -236,28 +145,8 @@ public class App extends Application {
                 posNinjaY += movNinjaY;
                 groupNinja.setLayoutY(posNinjaY);
 
-                //Acciones vivo - muerto
-                if (vivo == true){
-                    movShurikenX = -3;
-                    gameOver.setVisible(false);
-                    ninjaMuerto.setVisible(false);
-                    groupNinja.setVisible(true);
-                    if (puntos >= 5){
-                        movShurikenX = -4;
-                    }
-                    if (puntos >= 10){
-                        movShurikenX = -5;
-                    }
-                    if (puntos >= 15){
-                        movShurikenX = -6;
-                    }
-                }else{
-                    movShurikenX = 0;
-                    ninjaMuerto.setVisible(true);
-                    groupNinja.setVisible(false);
-                    gameOver.setVisible(true);
-                    sonidoAmbiente.stop();
-                }   
+                //Condiciones vivo y muerto
+                vivoMuerto();  
                 
                 //Movimiento de los Shurikens
                 movShuriken();
@@ -366,7 +255,8 @@ public class App extends Application {
         boolean colisionVacia3 = zonaColision3.getBoundsInLocal().isEmpty();
         Shape zonaColision4 = Shape.intersect(zonaContacto, zonaCoin);
         boolean colisionVacia4 = zonaColision4.getBoundsInLocal().isEmpty();
-                    if (colisionVacia4 == false && visibleCoin == true){
+                    //Colision con la moneda
+                    if (colisionVacia4 == false && visibleCoin == true && vivo == true){
                         sonidoMoneda.play(0.5);
                         visibleCoin = false;
                         posCoinX = (int)(Math.random()*901);
@@ -379,45 +269,29 @@ public class App extends Application {
                         groupCoin.setLayoutX (posCoinX);
                         contadorShuriken1 = 1;
                     }
-                        //Perdida de vidas
+                     //Colision shuriken1
                     if (colisionVacia1 == false){
                         vidas --;
                         textVidas.setText(String.valueOf(vidas));
                         random1=(random.nextInt(301)+200);
                         posShuriken1X= 1030 +random1;
-                        if (posShuriken1X <= posShuriken3X+200){
-                        posShuriken1X = 1030 + random1;
-                        }
-                        if (posShuriken1X <= posShuriken2X+200){
-                        posShuriken1X = 1030 + random1;
-                        }
-                    }
 
+                    }
+                    //Colision shuriken2
                     if (colisionVacia2 == false){
                         vidas --;
                         textVidas.setText(String.valueOf(vidas));
                         random2=(random.nextInt(301)+200);
                         posShuriken2X= 1310 +random2;
-                        if (posShuriken2X <= posShuriken3X+200){
-                        posShuriken2X = 1310 + random2;
-                        }
-                        if (posShuriken2X <= posShuriken1X+200){
-                        posShuriken2X = 1310 + random2;
-                        }
-                      
+
                     }
+                    //Colision shuriken
                     if (colisionVacia3 == false){
                         vidas --;
                         textVidas.setText(String.valueOf(vidas));
                         random3=(random.nextInt(301)+200);
-                        posShuriken3X= 1610 +random3;
-                        if (posShuriken3X <= posShuriken2X+200){
-                        posShuriken3X = 1610 + random3;
-                        }
-                        if (posShuriken3X <= posShuriken1X+200){
-                        posShuriken3X = 1610 + random3;
-                        }
-                        
+                        posShuriken3X= 1610 +random3;  
+
                     }
                     //Aparicion monedas
                     if (contadorShuriken1%2 == 0){
@@ -441,6 +315,7 @@ public class App extends Application {
                 posShuriken3X += movShurikenX;
                 groupShuriken3.setLayoutX(posShuriken3X); 
                 
+                //Limite posicion ninja
                 if (posNinjaX >= 900){
                     posNinjaX = 900;
                 }
@@ -569,6 +444,147 @@ public class App extends Application {
         groupShuriken3.getChildren().add(rectangleCuerpo3);
         groupShuriken3.getChildren().add(circleCola3);
         groupShuriken3.getChildren().add(circleResta3);  
+    }
+    
+    void audios(){
+      //Sonido salto  
+        URL urlAudioSalto = getClass().getResource("/audio/salto3.wav");
+        if(urlAudioSalto != null) {
+            try {
+                sonidoSalto = new AudioClip(urlAudioSalto.toURI().toString());
+                
+            } catch (URISyntaxException ex) {
+                System.out.println("Error en el formato de ruta de archivo de audio");
+            }            
+        } else {
+        System.out.println("No se ha encontrado el archivo de audio");
+        }
+        
+        //Sonido salto  
+        URL urlAudioMoneda = getClass().getResource("/audio/moneda.wav");
+        if(urlAudioMoneda != null) {
+            try {
+                sonidoMoneda = new AudioClip(urlAudioMoneda.toURI().toString());
+                
+            } catch (URISyntaxException ex) {
+                System.out.println("Error en el formato de ruta de archivo de audio");
+            }            
+        } else {
+        System.out.println("No se ha encontrado el archivo de audio");
+        }
+        
+        //Sonido Ambiente  
+        URL urlAudioAmbiente = getClass().getResource("/audio/ambiente.mp3");
+        if(urlAudioAmbiente != null) {
+            try {
+                sonidoAmbiente = new AudioClip(urlAudioAmbiente.toURI().toString());
+                sonidoAmbiente.setCycleCount(AudioClip.INDEFINITE);
+                sonidoAmbiente.play();
+                
+            } catch (URISyntaxException ex) {
+                System.out.println("Error en el formato de ruta de archivo de audio");
+            }            
+        } else {
+        System.out.println("No se ha encontrado el archivo de audio");
+        }  
+    }
+    
+    void vivoMuerto(){
+      //Acciones vivo - muerto
+        if (vivo == true){
+                    movShurikenX = -3;
+                    gameOver.setVisible(false);
+                    ninjaMuerto.setVisible(false);
+                    groupNinja.setVisible(true);
+                    if (puntos >= 5){
+                        movShurikenX = -4;
+                    }
+                    if (puntos >= 10){
+                        movShurikenX = -5;
+                    }
+                    if (puntos >= 15){
+                        movShurikenX = -6;
+                    }
+                }else{
+                    movShurikenX = 0;
+                    ninjaMuerto.setVisible(true);
+                    groupNinja.setVisible(false);
+                    gameOver.setVisible(true);
+                    sonidoAmbiente.stop();
+                }  
+    }
+    
+    void imagenesAñadidas(){
+      //Añadir imagen
+        root.getChildren().add(fondo);
+        root.getChildren().add(fondo2);
+        root.getChildren().add(groupNinja);
+        root.getChildren().add(groupShuriken1);
+        root.getChildren().add(groupShuriken2);
+        root.getChildren().add(groupShuriken3);
+        root.getChildren().add(paneScores);
+        root.getChildren().add(groupCoin);
+        root.getChildren().add(ninjaMuerto);
+        root.getChildren().add(gameOver);  
+    }
+    
+    void cargaImagenes(){
+        //Imagenes de fondo
+        Image img = new Image(getClass().getResourceAsStream("/images/fondo.png"));
+        fondo = new ImageView(img);
+        Image img3 = new Image(getClass().getResourceAsStream("/images/fondo2.png"));
+        fondo2 = new ImageView(img3);
+        img4 = new Image (getClass().getResourceAsStream("/images/coinnn_1.png"));
+        
+        //Imagen ninja
+        img2 = new Image (getClass().getResourceAsStream("/images/ninjaBueno.png"));
+        Image img5 = new Image (getClass().getResourceAsStream("/images/ninaMuerto.png"));
+        ninjaMuerto = new ImageView (img5);
+        ninjaMuerto.setVisible(false);
+        
+        //Imagen GameOver
+        Image img6 = new Image(getClass().getResourceAsStream("/images/gameOver.png"));
+        gameOver = new ImageView (img6);
+        gameOver.setVisible(false);
+        
+    }
+    
+    void marcos(){
+        //Agregando marco al ninja
+        groupNinja = new Group();
+        ImageView ninja2 = new ImageView (img2);
+        zonaContacto = new Rectangle (45, 55);
+        groupNinja.getChildren().add(ninja2);
+        groupNinja.getChildren().add(zonaContacto);
+        groupNinja.setLayoutY(posNinjaY);
+        zonaContacto.setVisible(false);
+        
+        //Agregando marco a la moneda
+        groupCoin = new Group();
+        ImageView coin = new ImageView (img4);
+        zonaCoin = new Rectangle (30,30);
+        groupCoin.getChildren().add(coin);
+        groupCoin.getChildren().add(zonaCoin);
+        zonaCoin.setVisible(false);
+        groupCoin.setVisible(false);
+        posCoinX = (int)(Math.random()*901);
+        groupCoin.setLayoutY(posCoinY);
+        groupCoin.setLayoutX (posCoinX);
+    }
+    
+    void posShuriken(){
+        //Posicionamiento de los shurikens
+        groupShuriken1.setLayoutX(posShuriken1X);
+        groupShuriken1.setLayoutY(posShurikenY);
+        groupShuriken1.setRotate(270);
+        //Posicionamiento Shuriken2
+        groupShuriken2.setLayoutX(posShuriken2X);
+        groupShuriken2.setLayoutY(posShurikenY);
+        groupShuriken2.setRotate(270);
+        //Posicionamiento Shuriken3
+        groupShuriken3.setLayoutX(posShuriken3X);
+        groupShuriken3.setLayoutY(posShurikenY);
+        groupShuriken3.setRotate(270);
     }
 }
     
