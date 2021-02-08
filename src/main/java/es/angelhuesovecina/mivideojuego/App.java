@@ -57,6 +57,7 @@ public class App extends Application {
     int distShuriken1;
     int distShuriken2;
     int distShuriken3;
+    int totalPosShuriken1;
     Text textPuntuacion;
     Group groupCoin;
     Group groupShuriken1;
@@ -169,18 +170,7 @@ public class App extends Application {
             ninjaMuerto.setX(posNinjaX);
             ninjaMuerto.setY(posNinjaY);
             
-            //Restart Shurikens
-            if (posShuriken1X <= 0){
-                posShuriken1X = 1030;
-                contadorShuriken1 ++;
-                
-            }
-            if (posShuriken2X <= 0){
-                posShuriken2X = 1310;
-            }
-            if (posShuriken3X <=0){
-                posShuriken3X = 1610;
-            }
+            
                 
                 
                 //Visibilidad Moneda
@@ -212,8 +202,11 @@ public class App extends Application {
                     if (puntos >= 5){
                         movShurikenX = -4;
                     }
-                    if (puntos >= 15){
+                    if (puntos >= 10){
                         movShurikenX = -5;
+                    }
+                    if (puntos >= 15){
+                        movShurikenX = -6;
                     }
                 }else{
                     movShurikenX = 0;
@@ -416,7 +409,26 @@ public class App extends Application {
                 }else if (posNinjaY >= 280){
                     posNinjaY = 280;
                     movNinjaY = 0;
-                } 
+                }
+                //Restart Shurikens
+                if (posShuriken1X <= 0){
+                    contadorShuriken1 ++;
+                    posShuriken1X = 1030;
+                    random1=(random.nextInt(301)+200);
+                    totalPosShuriken1 = posShuriken1X + random1;
+                    groupShuriken1.setLayoutX(totalPosShuriken1);
+                
+                }
+                if (posShuriken2X <= 0){
+                    random2=(random.nextInt(301)+200);
+                    posShuriken2X = totalPosShuriken1 + random2;
+                    groupShuriken2.setLayoutX(posShuriken2X);
+                }
+                if (posShuriken3X <=0){
+                    random3=(random.nextInt(301)+200);
+                    posShuriken3X=posShuriken2X + random3;
+                    groupShuriken3.setLayoutX(posShuriken3X);
+                }
     }
     
     void creacionShurikens(){
