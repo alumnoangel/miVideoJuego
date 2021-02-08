@@ -1,5 +1,7 @@
 package es.angelhuesovecina.mivideojuego;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Random;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -13,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
@@ -78,6 +81,9 @@ public class App extends Application {
     Image img2;
     HBox paneScores;
     Pane root;
+    AudioClip sonidoSalto;
+    AudioClip sonidoMoneda;
+    AudioClip sonidoAmbiente;
     
     @Override
     public void start(Stage stage) {
@@ -143,8 +149,48 @@ public class App extends Application {
         groupShuriken3.setLayoutX(posShuriken3X);
         groupShuriken3.setLayoutY(posShurikenY);
         groupShuriken3.setRotate(270);
-    
         
+        //Sonido salto  
+        URL urlAudioSalto = getClass().getResource("/audio/salto3.wav");
+        if(urlAudioSalto != null) {
+            try {
+                sonidoSalto = new AudioClip(urlAudioSalto.toURI().toString());
+                
+            } catch (URISyntaxException ex) {
+                System.out.println("Error en el formato de ruta de archivo de audio");
+            }            
+        } else {
+        System.out.println("No se ha encontrado el archivo de audio");
+        }
+        
+        //Sonido salto  
+        URL urlAudioMoneda = getClass().getResource("/audio/moneda.wav");
+        if(urlAudioMoneda != null) {
+            try {
+                sonidoMoneda = new AudioClip(urlAudioMoneda.toURI().toString());
+                
+            } catch (URISyntaxException ex) {
+                System.out.println("Error en el formato de ruta de archivo de audio");
+            }            
+        } else {
+        System.out.println("No se ha encontrado el archivo de audio");
+        }
+        
+        //Sonido Ambiente  
+        URL urlAudioAmbiente = getClass().getResource("/audio/ambiente.mp3");
+        if(urlAudioAmbiente != null) {
+            try {
+                sonidoAmbiente = new AudioClip(urlAudioAmbiente.toURI().toString());
+                sonidoAmbiente.setCycleCount(AudioClip.INDEFINITE);
+                sonidoAmbiente.play();
+                
+            } catch (URISyntaxException ex) {
+                System.out.println("Error en el formato de ruta de archivo de audio");
+            }            
+        } else {
+        System.out.println("No se ha encontrado el archivo de audio");
+        }
+
         //LAYOUTS PUNTUACIONES
         layaoutPuntuaciones();
         
@@ -164,14 +210,11 @@ public class App extends Application {
         controles();
 
         Timeline animacionFondo = new Timeline(
-            new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> {
+            new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) ->{
                 
                 //Ninja Muerto
             ninjaMuerto.setX(posNinjaX);
             ninjaMuerto.setY(posNinjaY);
-            
-            
-                
                 
                 //Visibilidad Moneda
                 if (visibleCoin == false){
@@ -213,6 +256,7 @@ public class App extends Application {
                     ninjaMuerto.setVisible(true);
                     groupNinja.setVisible(false);
                     gameOver.setVisible(true);
+                    sonidoAmbiente.stop();
                 }   
                 
                 //Movimiento de los Shurikens
@@ -246,6 +290,7 @@ public class App extends Application {
                         if (vivo == true){
                             if (posNinjaY == 280){
                                 movNinjaY = -5;
+                                sonidoSalto.play(0.5);
                             }
                         }
                         break;
@@ -261,6 +306,7 @@ public class App extends Application {
                             posShuriken2X = 1310;
                             posShuriken3X = 1610;
                             posCoinY = -30;
+                            sonidoAmbiente.play();
                         }
                         break;
                     }
@@ -321,6 +367,7 @@ public class App extends Application {
         Shape zonaColision4 = Shape.intersect(zonaContacto, zonaCoin);
         boolean colisionVacia4 = zonaColision4.getBoundsInLocal().isEmpty();
                     if (colisionVacia4 == false && visibleCoin == true){
+                        sonidoMoneda.play(0.5);
                         visibleCoin = false;
                         posCoinX = (int)(Math.random()*901);
                         posCoinY = -30;
@@ -382,7 +429,6 @@ public class App extends Application {
                         }
                         groupCoin.setLayoutY(posCoinY);  
                     }
-                    System.out.println(contadorShuriken1);
     }
     
     void movShuriken(){
