@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -65,7 +64,6 @@ public class App extends Application {
     Group groupShuriken3;
     Group groupNinja;
     Text textVidas;
-    Text textYouLose;
     Rectangle zonaContacto;
     Rectangle zonaCoin;
     Polygon polygonPunta1;
@@ -78,7 +76,6 @@ public class App extends Application {
     Image img4;
     Image img2;
     HBox paneScores;
-    HBox paneYouLose;
     Pane root;
     
     @Override
@@ -103,6 +100,11 @@ public class App extends Application {
         Image img5 = new Image (getClass().getResourceAsStream("/images/ninaMuerto.png"));
         ninjaMuerto = new ImageView (img5);
         ninjaMuerto.setVisible(false);
+        
+        //Imagen GameOver
+        Image img6 = new Image(getClass().getResourceAsStream("/images/gameOver.png"));
+        ImageView gameOver = new ImageView (img6);
+        gameOver.setVisible(false);
         
         //Creacion de Shurikens
         creacionShurikens();
@@ -153,9 +155,9 @@ public class App extends Application {
         root.getChildren().add(groupShuriken2);
         root.getChildren().add(groupShuriken3);
         root.getChildren().add(paneScores);
-        root.getChildren().add(paneYouLose);
         root.getChildren().add(groupCoin);
         root.getChildren().add(ninjaMuerto);
+        root.getChildren().add(gameOver);
         
         //Controles
         controles();
@@ -204,7 +206,7 @@ public class App extends Application {
                 //Acciones vivo - muerto
                 if (vivo == true){
                     movShurikenX = -3;
-                    textYouLose.setVisible(false);
+                    gameOver.setVisible(false);
                     ninjaMuerto.setVisible(false);
                     groupNinja.setVisible(true);
                     if (puntos >= 5){
@@ -215,9 +217,9 @@ public class App extends Application {
                     }
                 }else{
                     movShurikenX = 0;
-                    textYouLose.setVisible(true);
                     ninjaMuerto.setVisible(true);
                     groupNinja.setVisible(false);
+                    gameOver.setVisible(true);
                 }   
                 
                 //Movimiento de los Shurikens
@@ -266,7 +268,6 @@ public class App extends Application {
                             posShuriken2X = 1310;
                             posShuriken3X = 1610;
                             posCoinY = -30;
-                            textYouLose.setVisible(false);
                         }
                         break;
                     }
@@ -283,12 +284,6 @@ public class App extends Application {
         paneScores.setAlignment(Pos.CENTER);
         paneScores.setMinWidth(SCENE_TAM_X);
         paneScores.setSpacing (300);
-            //Layaout YouLose
-        paneYouLose = new HBox();
-        paneYouLose.setTranslateX(250);
-        paneYouLose.setTranslateY(150);
-        paneYouLose.setMinWidth(SCENE_TAM_X);
-        paneYouLose.setSpacing(300);
         
             //Layaout puntuacion actual
         HBox puntActual = new HBox();
@@ -298,10 +293,6 @@ public class App extends Application {
         HBox puntVidas = new HBox();
         puntVidas.setSpacing(10);
         paneScores.getChildren().add(puntVidas);
-            //Layaout You Lose
-        HBox youLose = new HBox();
-        youLose.setSpacing(10);
-        paneYouLose.getChildren().add(youLose);
             //Texto etiqueta para la puntuacion
         Text textEtiquetaPuntuacion = new Text("Puntos:");
         textEtiquetaPuntuacion.setFont(Font.font(TEXT_SIZE));
@@ -320,17 +311,11 @@ public class App extends Application {
         textVidas = new Text ("2");
         textVidas.setFont(Font.font(TEXT_SIZE));
         textVidas.setFill(Color.BLACK);
-        //Texto etiqueta you lose
-        textYouLose = new Text ("YOU LOSE");
-        textYouLose.setFont(Font.font(TEXT_SIZE_YL));
-        textYouLose.setFill(Color.RED);
-        textYouLose.setVisible(false);
             //Añadir texto a los layouts
         puntActual.getChildren().add(textEtiquetaPuntuacion);
         puntActual.getChildren().add(textPuntuacion);
         puntVidas.getChildren().add(textEtiquetaVidas);
         puntVidas.getChildren().add(textVidas);
-        youLose.getChildren().add(textYouLose);
     }
     
     void colisiones(){
