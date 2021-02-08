@@ -86,8 +86,8 @@ public class App extends Application {
         stage.setResizable(false);
         stage.setTitle("Mi Juego");
         stage.setScene(scene);
-        stage.show();
-      
+        stage.show();        
+        
         //Carga de imagenes
         //Imagenes de fondo
         Image img = new Image(getClass().getResourceAsStream("/images/fondo.png"));
